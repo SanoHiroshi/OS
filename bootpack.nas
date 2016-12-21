@@ -13,19 +13,17 @@
 [FILE "bootpack.c"]
 [SECTION .data]
 LC0:
-	DB	"Welcome to",0x00
-LC1:
-	DB	"Sano First OS",0x00
-LC2:
-	DB	"scrnx = %d",0x00
+	DB	"(%d, %d)",0x00
 [SECTION .text]
 	GLOBAL	_HariMain
 _HariMain:
 	PUSH	EBP
 	MOV	EBP,ESP
+	PUSH	EDI
+	PUSH	ESI
 	PUSH	EBX
-	SUB	ESP,48
-	LEA	EBX,DWORD [-52+EBP]
+	LEA	EBX,DWORD [-60+EBP]
+	SUB	ESP,304
 	CALL	_init_palette
 	MOVSX	EAX,WORD [4086]
 	PUSH	EAX
@@ -33,46 +31,48 @@ _HariMain:
 	PUSH	EAX
 	PUSH	DWORD [4088]
 	CALL	_init_screen
+	MOV	ECX,2
+	MOVSX	EAX,WORD [4084]
+	LEA	EDX,DWORD [-16+EAX]
+	MOV	EAX,EDX
+	CDQ
+	IDIV	ECX
+	MOVSX	EDX,WORD [4086]
+	SUB	EDX,44
+	MOV	EDI,EAX
+	MOV	EAX,EDX
+	CDQ
+	IDIV	ECX
+	PUSH	EAX
+	MOV	ESI,EAX
+	PUSH	EDI
 	PUSH	LC0
-	PUSH	7
-	PUSH	8
-	PUSH	8
-	MOVSX	EAX,WORD [4084]
-	PUSH	EAX
-	PUSH	DWORD [4088]
-	CALL	_putfont8_asc
-	ADD	ESP,36
-	PUSH	LC1
-	PUSH	7
-	PUSH	31
-	PUSH	31
-	MOVSX	EAX,WORD [4084]
-	PUSH	EAX
-	PUSH	DWORD [4088]
-	CALL	_putfont8_asc
-	PUSH	LC1
-	PUSH	7
-	PUSH	30
-	PUSH	30
-	MOVSX	EAX,WORD [4084]
-	PUSH	EAX
-	PUSH	DWORD [4088]
-	CALL	_putfont8_asc
-	ADD	ESP,48
-	MOVSX	EAX,WORD [4084]
-	PUSH	EAX
-	PUSH	LC2
 	PUSH	EBX
 	CALL	_sprintf
 	PUSH	EBX
 	PUSH	7
+	LEA	EBX,DWORD [-316+EBP]
 	PUSH	64
 	PUSH	16
 	MOVSX	EAX,WORD [4084]
 	PUSH	EAX
 	PUSH	DWORD [4088]
 	CALL	_putfont8_asc
-	ADD	ESP,36
+	ADD	ESP,52
+	PUSH	14
+	PUSH	EBX
+	CALL	_init_mouse_cursor8
+	PUSH	16
+	PUSH	EBX
+	PUSH	ESI
+	PUSH	EDI
+	PUSH	16
+	PUSH	16
+	MOVSX	EAX,WORD [4084]
+	PUSH	EAX
+	PUSH	DWORD [4088]
+	CALL	_putblock8_8
+	ADD	ESP,40
 L2:
 	CALL	_io_hlt
 	JMP	L2
@@ -513,3 +513,117 @@ L51:
 	CMP	EBX,EDI
 	JLE	L51
 	JMP	L53
+[SECTION .data]
+_cursor.1:
+	DB	"**************.."
+	DB	"*oooooooooooo*.."
+	DB	"*ooooooooooo*..."
+	DB	"*oooooooooo*...."
+	DB	"*ooooooooo*....."
+	DB	"*oooooooo*......"
+	DB	"*oooooooo*......"
+	DB	"*ooooooooo*....."
+	DB	"*oooo**oooo*...."
+	DB	"*ooo*..*ooo*...."
+	DB	"*oo*....*ooo*..."
+	DB	"*o*......*ooo*.."
+	DB	"**........*ooo*."
+	DB	"*..........*ooo*"
+	DB	"............*oo*"
+	DB	".............***"
+[SECTION .text]
+	GLOBAL	_init_mouse_cursor8
+_init_mouse_cursor8:
+	PUSH	EBP
+	MOV	EBP,ESP
+	PUSH	EDI
+	PUSH	ESI
+	XOR	EDI,EDI
+	PUSH	EBX
+	PUSH	ESI
+	XOR	EBX,EBX
+	MOV	AL,BYTE [12+EBP]
+	MOV	ESI,DWORD [8+EBP]
+	MOV	BYTE [-13+EBP],AL
+L67:
+	XOR	EDX,EDX
+L66:
+	LEA	EAX,DWORD [EDX+EDI*1]
+	CMP	BYTE [_cursor.1+EAX],42
+	JE	L72
+L63:
+	CMP	BYTE [_cursor.1+EAX],111
+	JE	L73
+L64:
+	CMP	BYTE [_cursor.1+EAX],46
+	JE	L74
+L61:
+	INC	EDX
+	CMP	EDX,15
+	JLE	L66
+	INC	EBX
+	ADD	EDI,16
+	CMP	EBX,15
+	JLE	L67
+	POP	EBX
+	POP	EBX
+	POP	ESI
+	POP	EDI
+	POP	EBP
+	RET
+L74:
+	MOV	CL,BYTE [-13+EBP]
+	MOV	BYTE [EAX+ESI*1],CL
+	JMP	L61
+L73:
+	MOV	BYTE [EAX+ESI*1],7
+	JMP	L64
+L72:
+	MOV	BYTE [EAX+ESI*1],0
+	JMP	L63
+	GLOBAL	_putblock8_8
+_putblock8_8:
+	PUSH	EBP
+	MOV	EBP,ESP
+	PUSH	EDI
+	PUSH	ESI
+	XOR	ESI,ESI
+	PUSH	EBX
+	SUB	ESP,12
+	CMP	ESI,DWORD [20+EBP]
+	JGE	L87
+	XOR	EDI,EDI
+L85:
+	XOR	EBX,EBX
+	CMP	EBX,DWORD [16+EBP]
+	JGE	L89
+	MOV	EAX,DWORD [32+EBP]
+	ADD	EAX,EDI
+	MOV	DWORD [-20+EBP],EAX
+L84:
+	MOV	EAX,DWORD [28+EBP]
+	MOV	EDX,DWORD [24+EBP]
+	ADD	EAX,ESI
+	ADD	EDX,EBX
+	IMUL	EAX,DWORD [12+EBP]
+	ADD	EAX,EDX
+	MOV	ECX,DWORD [8+EBP]
+	MOV	EDX,DWORD [-20+EBP]
+	INC	EBX
+	MOV	DL,BYTE [EDX]
+	MOV	BYTE [EAX+ECX*1],DL
+	INC	DWORD [-20+EBP]
+	CMP	EBX,DWORD [16+EBP]
+	JL	L84
+L89:
+	INC	ESI
+	ADD	EDI,DWORD [36+EBP]
+	CMP	ESI,DWORD [20+EBP]
+	JL	L85
+L87:
+	ADD	ESP,12
+	POP	EBX
+	POP	ESI
+	POP	EDI
+	POP	EBP
+	RET
