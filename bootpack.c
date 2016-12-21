@@ -1,3 +1,5 @@
+#include <stdio.h>
+
 void io_hlt(void);
 void io_cli(void);
 void io_out8(int port, int data);
@@ -38,12 +40,15 @@ struct BOOTINFO{
 void HariMain(void)
 {
   struct BOOTINFO *binfo = (struct BOOTINFO *) 0x0ff0;
+  char s[40];
 
   init_palette(); // パレットの設定（画面の色を設定すること）
   init_screen(binfo->vram, binfo->scrnx, binfo->scrny); // 画面の初期化処理
   putfont8_asc(binfo->vram, binfo->scrnx, 8, 8, COL8_FFFFFF, "Welcome to"); // 文字を画面に書く
   putfont8_asc(binfo->vram, binfo->scrnx, 31, 31, COL8_FFFFFF, "Sano First OS"); // 文字を画面に書く
   putfont8_asc(binfo->vram, binfo->scrnx, 30, 30, COL8_FFFFFF, "Sano First OS"); // 文字を画面に書く
+  sprintf(s, "scrnx = %d", binfo->scrnx);
+  putfont8_asc(binfo->vram, binfo->scrnx, 16, 64, COL8_FFFFFF, s);
 
   for (;;) { // 条件を省略したら無限ループ
     io_hlt(); // CPUを停止させて、省電力にする命令

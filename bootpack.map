@@ -1,35 +1,47 @@
-text size :   1070(0x0042E)
-data size :   4176(0x01050)
+text size :   2370(0x00942)
+data size :   4216(0x01078)
 bss  size :      0(0x00000)
 
 0x00000000 : (.text)
 0x00000024 : (.text)
 0x00000024 : _HariMain
-0x000000AE : _init_palette
-0x000000C1 : _init_screen
-0x0000024C : _bookfill8
-0x0000029D : _putfont8
-0x00000323 : _putfont8_asc
-0x00000372 : _set_palette
-0x000003FA : _io_hlt
-0x000003FA : (.text)
-0x000003FC : _io_cli
-0x000003FE : _io_sti
-0x00000403 : _io_in8
-0x0000040E : _io_in16
-0x0000041A : _io_in32
-0x00000420 : _io_out8
-0x0000042A : _io_out16
-0x00000435 : _io_out32
-0x0000043F : _io_load_eflags
-0x00000442 : _io_store_eflags
-0x00000449 : (.text)
-0x00000449 : _HariStartup
+0x000000E5 : _init_palette
+0x000000F8 : _init_screen
+0x00000283 : _bookfill8
+0x000002D4 : _putfont8
+0x0000035A : _putfont8_asc
+0x000003A9 : _set_palette
+0x00000431 : _io_hlt
+0x00000431 : (.text)
+0x00000433 : _io_cli
+0x00000435 : _io_sti
+0x0000043A : _io_in8
+0x00000445 : _io_in16
+0x00000451 : _io_in32
+0x00000457 : _io_out8
+0x00000461 : _io_out16
+0x0000046C : _io_out32
+0x00000476 : _io_load_eflags
+0x00000479 : _io_store_eflags
+0x00000480 : (.text)
+0x00000480 : _HariStartup
+0x00000489 : _sprintf
+0x00000489 : (.text)
+0x0000049D : (.text)
+0x000004D9 : _strtoul0
+0x000005AC : (.text)
+0x000005D4 : _vsprintf
+0x00000000 : (.data)
+0x00000000 : (.data)
 0x00000000 : (.data)
 0x00000000 : (.data)
 0x00310000 : (.data)
-0x00310050 : _hankaku
-0x00310050 : (.data)
+0x00310058 : _hankaku
+0x00310058 : (.data)
+0x00311058 : (.data)
+0x00000000 : (.bss)
+0x00000000 : (.bss)
+0x00000000 : (.bss)
 0x00000000 : (.bss)
 0x00000000 : (.bss)
 0x00000000 : (.bss)

@@ -4,6 +4,8 @@ LC0:
 	.ascii "Welcome to\0"
 LC1:
 	.ascii "Sano First OS\0"
+LC2:
+	.ascii "scrnx = %d\0"
 	.text
 	.balign 2
 .globl _HariMain
@@ -11,6 +13,9 @@ LC1:
 _HariMain:
 	pushl	%ebp
 	movl	%esp, %ebp
+	pushl	%ebx
+	subl	$48, %esp
+	leal	-52(%ebp), %ebx
 	call	_init_palette
 	movswl	4086,%eax
 	pushl	%eax
@@ -44,6 +49,20 @@ _HariMain:
 	pushl	4088
 	call	_putfont8_asc
 	addl	$48, %esp
+	movswl	4084,%eax
+	pushl	%eax
+	pushl	$LC2
+	pushl	%ebx
+	call	_sprintf
+	pushl	%ebx
+	pushl	$7
+	pushl	$64
+	pushl	$16
+	movswl	4084,%eax
+	pushl	%eax
+	pushl	4088
+	call	_putfont8_asc
+	addl	$36, %esp
 L2:
 	call	_io_hlt
 	jmp	L2
@@ -503,6 +522,7 @@ L51:
 	.def	_bookfill8;	.scl	2;	.type	32;	.endef
 	.def	_set_palette;	.scl	2;	.type	32;	.endef
 	.def	_io_hlt;	.scl	2;	.type	32;	.endef
+	.def	_sprintf;	.scl	2;	.type	32;	.endef
 	.def	_putfont8_asc;	.scl	2;	.type	32;	.endef
 	.def	_init_screen;	.scl	2;	.type	32;	.endef
 	.def	_init_palette;	.scl	2;	.type	32;	.endef
