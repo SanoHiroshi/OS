@@ -1,27 +1,9 @@
-/* GDT‚âIDT‚È‚Ç‚ÌA descriptor table ŠÖŒW */
-
-struct SEGMENT_DESCRIPTOR {
-  short limit_low, base_low;
-  char base_mid, access_right;
-  char limit_high, base_high;
-};
-
-struct GATE_DESCRIPTOR {
-  short offset_low, selector;
-  char dw_count, access_right;
-  short offset_high;
-};
-
-void init_gdtidt(void);
-void set_segmdesc(struct SEGMENT_DESCRIPTOR *sd, unsigned int limit, int base, int ar);
-void set_gatedesc(struct GATE_DESCRIPTOR *gd, int offset, int selector, int ar);
-void load_gdtr(int limit, int addr);
-void load_idtr(int limit, int addr);
+#include "bootpack.h"
 
 void init_gdtidt(void)
 {
-  struct SEGMENT_DESCRIPTOR *gdt = (struct SEGMENT_DESCRIPTOR *) 0x00270000;
-  struct GATE_DESCRIPTOR    *idt = (struct GATE_DESCRIPTOR    *) 0x0026f800;
+  struct SEGMENT_DESCRIPTER *gdt = (struct SEGMENT_DESCRIPTER *) 0x00270000;
+  struct GATE_DESCRIPTER    *idt = (struct GATE_DESCRIPTER    *) 0x0026f800;
   int i;
 
   /* GDT‚Ì‰Šú‰» */
@@ -41,7 +23,7 @@ void init_gdtidt(void)
   return;
 }
 
-void set_segmdesc(struct SEGMENT_DESCRIPTOR *sd, unsigned int limit, int base, int ar)
+void set_segmdesc(struct SEGMENT_DESCRIPTER *sd, unsigned int limit, int base, int ar)
 {
   if (limit > 0xfffff) {
     ar |= 0x8000; /* G_bit = 1 */
@@ -56,7 +38,7 @@ void set_segmdesc(struct SEGMENT_DESCRIPTOR *sd, unsigned int limit, int base, i
   return;
 }
 
-void set_gatedesc(struct GATE_DESCRIPTOR *gd, int offset, int selector, int ar)
+void set_gatedesc(struct GATE_DESCRIPTER *gd, int offset, int selector, int ar)
 {
   gd->offset_low   = offset & 0xffff;
   gd->selector     = selector;
